@@ -1,0 +1,116 @@
+
+.signin-page {
+  display: flex;         
+  min-height: 100vh;     }
+
+.signin-left {
+  width: 50%;
+  padding: 60px 80px;
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+}
+
+.signin-logo {
+  font-size: 20px;
+  color: #2d5a27;
+  margin-bottom: 40px;
+  cursor: pointer; 
+}
+
+.signin-title {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.signin-subtitle {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 24px;
+}
+
+/* ── TABS ── */
+.signin-tabs {
+  display: flex;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 24px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 10px 24px;
+  font-size: 15px;
+  cursor: pointer;
+  color: #888;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px; 
+}
+
+.active-tab {
+  color: #2d5a27;
+  border-bottom: 2px solid #2d5a27;
+  font-weight: bold;
+}
+
+/* ── INPUTS ── */
+.signin-input {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #f2f2f2;
+  font-size: 15px;
+  margin-bottom: 16px;
+  outline: none; /* removes default blue outline */
+}
+
+.signin-input:focus {
+  background-color: #e8f5e9; /* light green when focused */
+}
+
+/* ── CONTINUE BUTTON ── */
+.signin-btn {
+  width: 100%;
+  padding: 14px;
+  background-color: #2d5a27;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 8px;
+  margin-bottom: 24px;
+}
+
+.signin-btn:hover {
+  background-color: #1e3d1a;
+}
+
+/* ── FOOTER TEXT ── */
+.signin-footer {
+  font-size: 14px;
+  color: #666;
+}
+
+.link {
+  font-weight: bold;
+  color: #2d5a27;
+  cursor: pointer;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* ── RIGHT SIDE ── */
+.signin-right {
+  width: 50%;
+}
+
+.signin-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* fills the area without stretching */
+}

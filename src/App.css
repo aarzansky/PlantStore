@@ -1,0 +1,42 @@
+/* Global Styles — applies to the whole app */
+
+* {
+  margin: 0;
+  padding: 0; 
+}
+
+body {
+  font-family: "Georgia", serif;
+  color: #1a1a1a;
+  background-color: #ffffff;
+}
+
+/* Reusable button styles */
+.btn-primary {
+  background-color: #2d5a27;
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #1e3d1a;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #2d5a27;
+  border: 2px solid #2d5a27;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  background-color: #2d5a27;
+  color: white;
+}
