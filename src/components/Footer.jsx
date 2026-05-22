@@ -11,13 +11,12 @@ function Footer() {
 
         <div className="footer-column">
           <h4>Product</h4>
-          <a href="#features">Features</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#features">Plants</a>
+          <a href="#pricing">Accessories</a>
         </div>
 
         <div className="footer-column">
           <h4>Resources</h4>
-          <a href="#blog">Blog</a>
           <a href="#guides">User guides</a>
         </div>
 
@@ -30,7 +29,7 @@ function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>© 2025 TheSecretGarden · Privacy · Terms</p>
+        <p>&copy; 2025 TheSecretGarden · Privacy · Terms</p>
       </div>
     </footer>
   );

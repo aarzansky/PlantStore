@@ -12,16 +12,19 @@
 }
 
 .signin-logo {
-  font-size: 20px;
+  font-size: 40px;
   color: #2d5a27;
   margin-bottom: 40px;
   cursor: pointer; 
+  font-family: 'Georgia', serif;
+
 }
 
 .signin-title {
   font-size: 36px;
   font-weight: bold;
   margin-bottom: 8px;
+  font-family: 'Georgia', serif;
 }
 
 .signin-subtitle {
@@ -30,7 +33,6 @@
   margin-bottom: 24px;
 }
 
-/* ── TABS ── */
 .signin-tabs {
   display: flex;
   border-bottom: 2px solid #e0e0e0;
@@ -54,7 +56,6 @@
   font-weight: bold;
 }
 
-/* ── INPUTS ── */
 .signin-input {
   width: 100%;
   padding: 14px 16px;
@@ -63,7 +64,7 @@
   background-color: #f2f2f2;
   font-size: 15px;
   margin-bottom: 16px;
-  outline: none; /* removes default blue outline */
+  outline: none; 
 }
 
 .signin-input:focus {

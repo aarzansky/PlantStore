@@ -7,8 +7,9 @@ function Navbar({ setPage }) {
       <div className="navbar-logo"> TheSecretGarden</div>
 
       <div className="navbar-links">
+        <a href="">Plants</a>
+        <a href="">Care</a>
         <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
         <a href="#about">About us</a>
       </div>
 
@@ -16,7 +17,7 @@ function Navbar({ setPage }) {
         <button className="btn-outline" onClick={() => setPage("signin")}>
           Sign in
         </button>
-        <button className="btn-primary" onClick={() => setPage("signin")}>
+        <button className="btn-primary" onClick={() => setPage("signup")}>
           Sign up
         </button>
       </div>

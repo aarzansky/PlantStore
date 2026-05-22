@@ -42,32 +42,41 @@ function LandingPage({ setPage }) {
             solution for creating, launching, and managing your e-commerce
             website.
           </p>
-          <button className="btn-primary" onClick={() => setPage("signin")}>
+          <button className="btn-signup" onClick={() => setPage("signup")}>
             Join us now
+          </button>
+          <button className="btn-signin" onClick={() => setPage("signin")}>
+            Already Joined?
           </button>
         </div>
       </section>
 
       <section className="features" id="features">
+        <p>Find Your Perfect Plant</p>
         <h2>Why Choose TheSecretGarden?</h2>
 
         <div className="features-grid">
           <div className="feature-card">
+            <img src="./assets/______" alt="" />
             <h3>Wide Variety</h3>
             <p>Explore variety of plants for your home</p>
           </div>
 
           <div className="feature-card">
+                        <img src="./assets/______" alt="" />
             <h3>Economical</h3>
             <p>Choose from a wide range of price suitable for you</p>
           </div>
 
           <div className="feature-card">
+                        <img src="./assets/______" alt="" />
+
             <h3>Good Care</h3>
             <p>Find care and maintenance tips for your plants to help keep them healthy</p>
           </div>
 
           <div className="feature-card">
+                        <img src="./assets/______" alt="" />
             <h3>Go Green</h3>
             <p>Upgrade your living space with more greenery</p>
           </div>
@@ -91,9 +100,13 @@ function LandingPage({ setPage }) {
         <p>Browse the plants you want and add to cart</p>
 
         <div className="category-cards">
-          <div className="category-card">🪴 Pots</div>
-          <div className="category-card">🌿 Outdoor Plants</div>
-          <div className="category-card">🌱 Plant Care</div>
+          <div className="category-card"> Pots</div>
+          <div className="category-card"> Outdoor Plants</div>
+          <div className="category-card"> Plant Care</div>
+          <div className="category-card">Aquatic Plants</div>
+          <div className="category-card">Creepers</div>
+          <div className="category-card">Succulents</div>
+          <div className="category-card">Fruits</div>
         </div>
       </section>
 

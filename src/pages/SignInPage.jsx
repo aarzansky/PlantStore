@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./SignInPage.css";
+import Navbar from "../components/Navbar";
 
 function SignInPage({ setPage }) {
   const [tab, setTab] = useState("email");
@@ -10,14 +11,15 @@ function SignInPage({ setPage }) {
 
 
   return (
+    <>
+          <Navbar setPage={setPage} />
     <div className="signin-page">
       <div className="signin-left">
         <h2 className="signin-logo" onClick={() => setPage("home")}>
-          🌿 TheSecretGarden
+         TheSecretGarden
         </h2>
 
-        <h1 className="signin-title">Sign in</h1>
-        <p className="signin-subtitle">Log in with your Email or your Phone Number</p>
+        <p className="signin-subtitle">Log in with your Email</p>
 
         <div className="signin-tabs">
           <button
@@ -26,33 +28,18 @@ function SignInPage({ setPage }) {
           >
             Email
           </button>
-          <button
-            className={tab === "phone" ? "tab active-tab" : "tab"}
-            onClick={() => setTab("phone")}
-          >
-            Phone Number
-          </button>
         </div>
 
         {tab === "email" && (
           <input
             className="signin-input"
             type="email"
-            placeholder="example.email@gmail.com"
+            placeholder="Enter your email"
             value={email}
             onChange={(e) => setEmail(e.target.value)} 
           />
         )}
 
-        {tab === "phone" && (
-          <input
-            className="signin-input"
-            type="tel"
-            placeholder="+977 98XXXXXXXX"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        )}
 
         <input
           className="signin-input"
@@ -68,7 +55,7 @@ function SignInPage({ setPage }) {
 
         <p className="signin-footer">
           Don't have an account?{" "}
-          <span className="link" onClick={() => alert("Sign Up page coming soon!")}>
+          <span className="link" onClick={() => setPage("signup")}>
             Sign Up
           </span>
         </p>
@@ -82,6 +69,7 @@ function SignInPage({ setPage }) {
         />
       </div>
     </div>
+    </>
   );
 }
 

@@ -13,7 +13,7 @@ body {
 
 /* Reusable button styles */
 .btn-primary {
-  background-color: #2d5a27;
+  background-color: #193316;
   color: white;
   border: none;
   padding: 12px 28px;
@@ -22,14 +22,40 @@ body {
   cursor: pointer;
 }
 
+.btn-signup
+{
+  background-color: white;
+  color: #193316;
+  border: none;
+  padding: 12px 36px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  cursor: pointer;
+}
+
+.btn-signin
+{
+  margin-left: 16px;
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  padding: 10px 34px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  cursor: pointer;
+}
+
 .btn-primary:hover {
-  background-color: #1e3d1a;
+  background-color: #193316;
 }
 
 .btn-outline {
   background-color: transparent;
-  color: #2d5a27;
-  border: 2px solid #2d5a27;
+  color: #193316;
+  border: 2px solid #193316;
   padding: 10px 24px;
   border-radius: 6px;
   font-size: 15px;
