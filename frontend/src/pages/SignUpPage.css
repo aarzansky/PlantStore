@@ -36,6 +36,7 @@
 .signup-input {
   padding: 16px;
   margin-bottom: 18px;
+
   border: 1px solid #dcdcdc;
   border-radius: 12px;
   font-size: 15px;
@@ -45,6 +46,8 @@
   background-color: #dcdcdc;
   color:#193316;
 }
+
+
 
 
 .signup-btn {

@@ -1,0 +1,97 @@
+.plants-page {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.plants-page h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #193316;
+}
+
+.category-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.category-btn {
+  padding: 8px 20px;
+  border: 2px solid #193316;
+  background: transparent;
+  color: #193316;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.category-btn:hover {
+  background: #193316;
+  color: white;
+}
+
+.category-btn.active {
+  background: #193316;
+  color: white;
+}
+
+.plants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.plant-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s;
+}
+
+.plant-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.plant-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.plant-info {
+  padding: 15px;
+}
+
+.plant-info h3 {
+  margin-bottom: 5px;
+  color: #193316;
+}
+
+.plant-category {
+  color: #888;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.plant-price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2d5a27;
+  margin-bottom: 10px;
+}
+
+.plant-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+}
