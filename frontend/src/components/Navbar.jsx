@@ -24,7 +24,7 @@ function Navbar() {
 
       <div className="navbar-links">
         {navLinks.map((link, index) => (
-          <a key={index} href={`/${link.toLowerCase().replace(" ", "")}`}>
+          <a key={index} href={`#${link.toLowerCase().replace(" ", "")}`}>
             {link}
           </a>
         ))}
@@ -44,6 +44,20 @@ function Navbar() {
         
         {isAuthenticated ? (
           <>
+            {/* Show Admin link if user is admin */}
+            {user?.isAdmin && (
+              <button 
+                className="btn-outline" 
+                onClick={() => navigate('/admin')}
+                style={{ 
+                  background: '#193316', 
+                  color: 'white',
+                  borderColor: '#193316'
+                }}
+              >
+                👑 Admin
+              </button>
+            )}
             <button 
               className="btn-outline" 
               onClick={() => navigate('/profile')}

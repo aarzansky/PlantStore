@@ -48,6 +48,7 @@ const registerUser = async (req, res) => {
         country: user.country,
         city: user.city,
         address: user.address,
+        isAdmin: user.isAdmin,
         token: generateToken(user._id),
       });
     } else {
@@ -87,6 +88,7 @@ const loginUser = async (req, res) => {
       country: user.country,
       city: user.city,
       address: user.address,
+      isAdmin: user.isAdmin,
       token: generateToken(user._id),
     });
   } catch (error) {

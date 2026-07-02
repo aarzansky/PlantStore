@@ -53,7 +53,7 @@ function CartPage() {
                 />
                 <div className="cart-item-info">
                   <h3>{item.name}</h3>
-                  <p className="cart-item-price">${item.price}</p>
+                  <p className="cart-item-price">Rs.{item.price}</p>
                   <div className="cart-item-actions">
                     <div className="quantity-selector">
                       <button 
@@ -79,7 +79,7 @@ function CartPage() {
                   </div>
                 </div>
                 <div className="cart-item-total">
-                  ${(item.price * item.quantity).toFixed(2)}
+                  Rs.{(item.price * item.quantity).toFixed(2)}
                 </div>
               </div>
             ))}
@@ -89,7 +89,7 @@ function CartPage() {
             <h2>Order Summary</h2>
             <div className="summary-row">
               <span>Items ({getTotalItems()})</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
+              <span>Rs.{getTotalPrice().toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
@@ -97,7 +97,7 @@ function CartPage() {
             </div>
             <div className="summary-total">
               <span>Total</span>
-              <span>${getTotalPrice().toFixed(2)}</span>
+              <span>Rs.{getTotalPrice().toFixed(2)}</span>
             </div>
             <button className="checkout-btn" onClick={handleCheckout}>
               Proceed to Checkout

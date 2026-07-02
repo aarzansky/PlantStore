@@ -36,9 +36,35 @@ export const plantsAPI = {
   getAll: () => api.get('/plants'),
   getById: (id) => api.get(`/plants/${id}`),
   getByCategory: (category) => api.get(`/plants/category/${category}`),
-  create: (plantData) => api.post('/plants', plantData),
-  update: (id, plantData) => api.put(`/plants/${id}`, plantData),
-  delete: (id) => api.delete(`/plants/${id}`),
+};
+
+// Orders API calls
+export const ordersAPI = {
+  create: (orderData) => api.post('/orders', orderData),
+  getMyOrders: () => api.get('/orders'),
+  getById: (id) => api.get(`/orders/${id}`),
+};
+
+// Admin API calls - ADD THIS SECTION
+export const adminAPI = {
+  // Dashboard
+  getStats: () => api.get('/admin/stats'),
+  
+  // Plant Management
+  getPlants: () => api.get('/admin/plants'),
+  createPlant: (plantData) => api.post('/admin/plants', plantData),
+  updatePlant: (id, plantData) => api.put(`/admin/plants/${id}`, plantData),
+  deletePlant: (id) => api.delete(`/admin/plants/${id}`),
+  
+  // User Management
+  getUsers: () => api.get('/admin/users'),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  makeAdmin: (id) => api.put(`/admin/users/${id}/make-admin`),
+  
+  // Order Management
+  getOrders: () => api.get('/admin/orders'),
+  updateOrderStatus: (id, status) => api.put(`/admin/orders/${id}/status`, { status }),
+  deleteOrder: (id) => api.delete(`/admin/orders/${id}`),
 };
 
 export default api;

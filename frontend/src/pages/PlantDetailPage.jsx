@@ -73,7 +73,7 @@ function PlantDetailPage() {
           <div className="plant-detail-info">
             <h1>{plant.name}</h1>
             <p className="plant-category">{plant.category}</p>
-            <p className="plant-price">${plant.price}</p>
+            <p className="plant-price">Rs.{plant.price}</p>
             <p className="plant-description">{plant.description}</p>
             
             <div className="plant-stock">

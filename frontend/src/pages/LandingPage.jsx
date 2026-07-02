@@ -133,7 +133,7 @@ function LandingPage() {
               <div className="feature-card" key={plant._id}>
                 <div className="feature-icon">🌱</div>
                 <h3>{plant.name}</h3>
-                <p>${plant.price}</p>
+                <p>Rs.{plant.price}</p>
                 <button 
                   className="btn-primary" 
                   onClick={() => navigate(`/plant/${plant._id}`)}

@@ -13,12 +13,19 @@ import PlantDetailPage from './pages/PlantDetailPage';
 import CartPage from './pages/CartPage';
 import ProfilePage from './pages/ProfilePage';
 
+// Admin Pages
+import AdminDashboard from './pages/AdminDashboard';
+import AdminPlants from './pages/AdminPlants';
+import AdminUsers from './pages/AdminUsers';
+import AdminOrders from './pages/AdminOrders';
+
 function App() {
   return (
     <AuthProvider>
       <CartProvider>
         <Router>
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<LandingPage />} />
             <Route path="/signin" element={<SignInPage />} />
             <Route path="/signup" element={<SignUpPage />} />
@@ -26,6 +33,12 @@ function App() {
             <Route path="/plant/:id" element={<PlantDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/plants" element={<AdminPlants />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
           </Routes>
         </Router>
       </CartProvider>

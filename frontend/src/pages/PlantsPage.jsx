@@ -87,7 +87,7 @@ function PlantsPage() {
                 <div className="plant-info">
                   <h3>{plant.name}</h3>
                   <p className="plant-category">{plant.category}</p>
-                  <p className="plant-price">${plant.price}</p>
+                  <p className="plant-price">Rs.{plant.price}</p>
                   <div className="plant-actions">
                     <button 
                       className="btn-primary"
