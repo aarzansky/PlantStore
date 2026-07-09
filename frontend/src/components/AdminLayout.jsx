@@ -21,17 +21,17 @@ function AdminLayout({ children }) {
   };
 
   const menuItems = [
-    { path: '/admin', label: '📊 Dashboard', icon: '📊' },
-    { path: '/admin/plants', label: '🌿 Plants', icon: '🌿' },
-    { path: '/admin/users', label: '👥 Users', icon: '👥' },
-    { path: '/admin/orders', label: '📦 Orders', icon: '📦' },
+    { path: '/admin', label: 'Dashboard' },
+    { path: '/admin/plants', label: 'Plants' },
+    { path: '/admin/users', label: 'Users' },
+    { path: '/admin/orders', label: 'Orders' },
   ];
 
   return (
     <div className="admin-layout">
       <nav className="admin-nav">
         <div className="admin-nav-brand">
-          🌿 Admin Panel
+          Admin Panel
         </div>
         <div className="admin-nav-links">
           {menuItems.map((item) => (
@@ -40,7 +40,7 @@ function AdminLayout({ children }) {
               to={item.path}
               className={`admin-nav-link ${location.pathname === item.path ? 'active' : ''}`}
             >
-              {item.icon} {item.label}
+              {item.label}
             </Link>
           ))}
         </div>

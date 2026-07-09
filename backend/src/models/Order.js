@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
+  orderNumber: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -11,6 +16,10 @@ const OrderSchema = new mongoose.Schema({
       plant: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Plant',
+        required: true,
+      },
+      name: {
+        type: String,
         required: true,
       },
       quantity: {
@@ -30,9 +39,21 @@ const OrderSchema = new mongoose.Schema({
     min: 0,
   },
   shippingAddress: {
+    fullName: String,
+    phone: String,
     address: String,
     city: String,
     country: String,
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['cod', 'khalti'],
+    default: 'cod',
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['unpaid', 'paid'],
+    default: 'unpaid',
   },
   status: {
     type: String,
@@ -40,6 +61,10 @@ const OrderSchema = new mongoose.Schema({
     default: 'pending',
   },
   createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },

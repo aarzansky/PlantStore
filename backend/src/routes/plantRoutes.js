@@ -9,15 +9,16 @@ const {
   deletePlant,
 } = require('../controllers/plantController');
 const { protect } = require('../middleware/auth');
+const { isAdmin } = require('../middleware/admin');
 
 // Public routes
 router.get('/', getAllPlants);
 router.get('/:id', getPlantById);
 router.get('/category/:category', getPlantsByCategory);
 
-// Private/Admin routes (protect these later with admin middleware)
-router.post('/', protect, createPlant);
-router.put('/:id', protect, updatePlant);
-router.delete('/:id', protect, deletePlant);
+// Private/Admin routes
+router.post('/', protect, isAdmin, createPlant);
+router.put('/:id', protect, isAdmin, updatePlant);
+router.delete('/:id', protect, isAdmin, deletePlant);
 
 module.exports = router;

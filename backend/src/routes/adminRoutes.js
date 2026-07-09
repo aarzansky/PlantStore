@@ -180,6 +180,24 @@ router.get('/orders', protect, isAdmin, async (req, res) => {
   }
 });
 
+// @desc    Get single order (with populated plant details)
+// @route   GET /api/admin/orders/:id
+router.get('/orders/:id', protect, isAdmin, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate('user', 'firstName lastName email')
+      .populate('items.plant', 'name price imageUrl');
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found' });
+    }
+
+    res.json({ success: true, order });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // @desc    Update order status
 // @route   PUT /api/admin/orders/:id/status
 router.put('/orders/:id/status', protect, isAdmin, async (req, res) => {

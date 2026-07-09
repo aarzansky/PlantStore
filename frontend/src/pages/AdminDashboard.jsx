@@ -36,37 +36,22 @@ function AdminDashboard() {
       <div className="admin-dashboard">
         <h1>Dashboard</h1>
         
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">🌿</div>
-            <div className="stat-info">
-              <h3>{stats?.totalPlants || 0}</h3>
-              <p>Total Plants</p>
-            </div>
+        <div className="stats-row">
+          <div className="stat-block">
+            <span className="stat-value">{stats?.totalPlants || 0}</span>
+            <span className="stat-label">Total Plants</span>
           </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">👥</div>
-            <div className="stat-info">
-              <h3>{stats?.totalUsers || 0}</h3>
-              <p>Total Users</p>
-            </div>
+          <div className="stat-block">
+            <span className="stat-value">{stats?.totalUsers || 0}</span>
+            <span className="stat-label">Total Users</span>
           </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">📦</div>
-            <div className="stat-info">
-              <h3>{stats?.totalOrders || 0}</h3>
-              <p>Total Orders</p>
-            </div>
+          <div className="stat-block">
+            <span className="stat-value">{stats?.totalOrders || 0}</span>
+            <span className="stat-label">Total Orders</span>
           </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">💰</div>
-            <div className="stat-info">
-              <h3>Rs.{stats?.totalRevenue?.toFixed(2) || '0.00'}</h3>
-              <p>Total Revenue</p>
-            </div>
+          <div className="stat-block">
+            <span className="stat-value">Rs.{stats?.totalRevenue?.toFixed(2) || '0.00'}</span>
+            <span className="stat-label">Total Revenue</span>
           </div>
         </div>
 
@@ -95,7 +80,7 @@ function AdminDashboard() {
                       <td>{order.user?.firstName} {order.user?.lastName}</td>
                       <td>Rs.{order.totalAmount.toFixed(2)}</td>
                       <td>
-                        <span className={`status-badge ${order.status}`}>
+                        <span className={`status-dot status-${order.status}`}>
                           {order.status}
                         </span>
                       </td>

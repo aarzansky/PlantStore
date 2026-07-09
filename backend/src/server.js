@@ -19,7 +19,7 @@ app.use(express.json());
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/plants', require('./routes/plantRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
-app.use('/api/admin', require('./routes/adminRoutes')); // ← ADD THIS LINE
+app.use('/api/admin', require('./routes/adminRoutes')); 
 
 // Root route
 app.get('/', (req, res) => {

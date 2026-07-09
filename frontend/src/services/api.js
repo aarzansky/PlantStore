@@ -43,6 +43,7 @@ export const ordersAPI = {
   create: (orderData) => api.post('/orders', orderData),
   getMyOrders: () => api.get('/orders'),
   getById: (id) => api.get(`/orders/${id}`),
+  cancel: (id) => api.put(`/orders/${id}/cancel`),
 };
 
 // Admin API calls - ADD THIS SECTION
@@ -63,6 +64,7 @@ export const adminAPI = {
   
   // Order Management
   getOrders: () => api.get('/admin/orders'),
+  getOrderById: (id) => api.get(`/admin/orders/${id}`),
   updateOrderStatus: (id, status) => api.put(`/admin/orders/${id}/status`, { status }),
   deleteOrder: (id) => api.delete(`/admin/orders/${id}`),
 };

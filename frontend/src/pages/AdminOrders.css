@@ -60,6 +60,26 @@
   border-color: #f5c6cb;
 }
 
+.row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-view-order {
+  padding: 4px 12px;
+  background: white;
+  color: #193316;
+  border: 1px solid #193316;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.btn-view-order:hover {
+  background: #193316;
+  color: white;
+}
+
 .btn-delete {
   padding: 4px 12px;
   background: #f44336;

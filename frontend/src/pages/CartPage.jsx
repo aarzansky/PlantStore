@@ -17,7 +17,7 @@ function CartPage() {
       navigate('/signin');
       return;
     }
-    alert('Proceeding to checkout...');
+    navigate('/checkout');
   };
 
   if (cartItems.length === 0) {

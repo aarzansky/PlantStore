@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../services/api';
 import AdminLayout from '../components/AdminLayout';
 import './AdminOrders.css';
 
 function AdminOrders() {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -106,12 +108,20 @@ function AdminOrders() {
                     </td>
                     <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                     <td>
-                      <button 
-                        className="btn-delete"
-                        onClick={() => handleDelete(order._id)}
-                      >
-                        Delete
-                      </button>
+                      <div className="row-actions">
+                        <button
+                          className="btn-view-order"
+                          onClick={() => navigate(`/admin/orders/${order._id}`)}
+                        >
+                          View
+                        </button>
+                        <button
+                          className="btn-delete"
+                          onClick={() => handleDelete(order._id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

@@ -11,6 +11,9 @@ import SignUpPage from './pages/SignUpPage';
 import PlantsPage from './pages/PlantsPage';
 import PlantDetailPage from './pages/PlantDetailPage';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import MyOrdersPage from './pages/MyOrdersPage';
+import OrderReceiptPage from './pages/OrderReceiptPage';
 import ProfilePage from './pages/ProfilePage';
 
 // Admin Pages
@@ -18,6 +21,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminPlants from './pages/AdminPlants';
 import AdminUsers from './pages/AdminUsers';
 import AdminOrders from './pages/AdminOrders';
+import AdminOrderDetail from './pages/AdminOrderDetail';
 
 function App() {
   return (
@@ -32,6 +36,9 @@ function App() {
             <Route path="/plants" element={<PlantsPage />} />
             <Route path="/plant/:id" element={<PlantDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/orders" element={<MyOrdersPage />} />
+            <Route path="/orders/:id" element={<OrderReceiptPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             
             {/* Admin Routes */}
@@ -39,6 +46,7 @@ function App() {
             <Route path="/admin/plants" element={<AdminPlants />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/orders/:id" element={<AdminOrderDetail />} />
           </Routes>
         </Router>
       </CartProvider>

@@ -27,7 +27,6 @@ function Footer() {
           <p>Bringing nature to your home since 2025</p>
         </div>
 
-        {/* Using map to create all footer columns */}
         {footerData.map((section, index) => (
           <div className="footer-column" key={index}>
             <h4>{section.title}</h4>

@@ -18,8 +18,8 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-logo" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-        🌿 TheSecretGarden
+      <div className="navbar-logo" onClick={() => navigate('/')}>
+        TheSecretGarden
       </div>
 
       <div className="navbar-links">
@@ -31,52 +31,34 @@ function Navbar() {
       </div>
 
       <div className="navbar-buttons">
-        <button 
-          className="btn-outline" 
-          onClick={() => navigate('/cart')}
-          style={{ position: 'relative' }}
-        >
-          🛒 Cart
-          {getTotalItems() > 0 && (
-            <span className="cart-badge">{getTotalItems()}</span>
-          )}
+        <button className="nav-link-btn cart-link" onClick={() => navigate('/cart')}>
+          Cart
+          {getTotalItems() > 0 && <span className="cart-badge">{getTotalItems()}</span>}
         </button>
-        
+
         {isAuthenticated ? (
           <>
-            {/* Show Admin link if user is admin */}
-            {user?.isAdmin && (
-              <button 
-                className="btn-outline" 
-                onClick={() => navigate('/admin')}
-                style={{ 
-                  background: '#193316', 
-                  color: 'white',
-                  borderColor: '#193316'
-                }}
-              >
-                👑 Admin
-              </button>
-            )}
-            <button 
-              className="btn-outline" 
-              onClick={() => navigate('/profile')}
-            >
+            <button className="nav-link-btn" onClick={() => navigate('/orders')}>
+              Orders
+            </button>
+            <button className="nav-link-btn" onClick={() => navigate('/profile')}>
               {user?.firstName}
             </button>
-            <button 
-              className="btn-primary" 
-              onClick={handleLogout}
-            >
+            {user?.isAdmin && (
+              <button className="nav-admin-badge" onClick={() => navigate('/admin')}>
+                Admin
+              </button>
+            )}
+            <button className="btn-primary navbar-cta" onClick={handleLogout}>
               Logout
             </button>
           </>
         ) : (
           <>
-            <button className="btn-outline" onClick={() => navigate('/signin')}>
+            <button className="nav-link-btn" onClick={() => navigate('/signin')}>
               Sign in
             </button>
-            <button className="btn-primary" onClick={() => navigate('/signup')}>
+            <button className="btn-primary navbar-cta" onClick={() => navigate('/signup')}>
               Sign up
             </button>
           </>
