@@ -8,8 +8,8 @@ const PlantSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Category is required'],
-    enum: ['Pots', 'Outdoor Plants', 'Plant Care', 'Aquatic Plants', 
-           'Creepers', 'Succulents', 'Fruits', 'Indoor Plants', 'Flowering Plants'],
+    // Categories now live in their own collection (see models/Category.js)
+    // and are managed from the admin panel, so this is no longer a fixed enum.
   },
   price: {
     type: Number,

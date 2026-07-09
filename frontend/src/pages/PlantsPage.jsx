@@ -1,30 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { plantsAPI } from '../services/api';
+import { plantsAPI, categoriesAPI } from '../services/api';
 import './PlantsPage.css';
 
 function PlantsPage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const [searchParams] = useSearchParams();
   const [plants, setPlants] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  // Pre-select a category if we arrived via a link like /plants?category=Succulents
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
+  const [categories, setCategories] = useState(['All']);
 
-  const categories = [
-    'All',
-    'Pots',
-    'Outdoor Plants',
-    'Plant Care',
-    'Aquatic Plants',
-    'Creepers',
-    'Succulents',
-    'Fruits',
-    'Indoor Plants',
-    'Flowering Plants'
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await categoriesAPI.getAll();
+        setCategories(['All', ...response.data.map((cat) => cat.name)]);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchPlants = async () => {

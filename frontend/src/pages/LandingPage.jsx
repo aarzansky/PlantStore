@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { plantsAPI } from '../services/api';
+import { plantsAPI, categoriesAPI } from '../services/api';
 import './LandingPage.css';
 
 function LandingPage() {
   const navigate = useNavigate();
   const [plants, setPlants] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -24,6 +25,19 @@ function LandingPage() {
       }
     };
     fetchPlants();
+  }, []);
+
+  // Fetch categories from API so newly-added categories show up automatically
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await categoriesAPI.getAll();
+        setCategories(response.data.map((cat) => cat.name));
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
   }, []);
 
   const features = [
@@ -64,18 +78,6 @@ function LandingPage() {
     },
   ];
 
-  const categories = [
-    "Pots",
-    "Outdoor Plants",
-    "Plant Care",
-    "Aquatic Plants",
-    "Creepers",
-    "Succulents",
-    "Fruits",
-    "Indoor Plants",
-    "Flowering Plants",
-  ];
-
   function prevTestimonial() {
     setTestimonialIndex((prev) => (prev > 0 ? prev - 1 : testimonials.length - 1));
   }
@@ -91,18 +93,21 @@ function LandingPage() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
+          <span className="hero-badge">🌿 Freshly picked, delivered with care</span>
           <h1>Welcome to The Secret Garden</h1>
           <h2>Your go-to destination for home plants</h2>
           <p>
             Transform your space into a thriving green oasis — an all-in-one
             solution for creating, launching, and managing your plant collection.
           </p>
-          <button className="btn-signup" onClick={() => navigate('/signup')}>
-            Join us now
-          </button>
-          <button className="btn-signin" onClick={() => navigate('/signin')}>
-            Already Joined?
-          </button>
+          <div className="hero-actions">
+            <button className="btn-signup" onClick={() => navigate('/signup')}>
+              Join us now
+            </button>
+            <button className="btn-signin" onClick={() => navigate('/signin')}>
+              Already Joined?
+            </button>
+          </div>
         </div>
       </section>
 
@@ -123,15 +128,19 @@ function LandingPage() {
       </section>
 
       {/* Featured Plants Section */}
-      <section className="features">
+      <section className="features" id="plants">
         <h2>Featured Plants</h2>
         <div className="features-grid">
           {loading ? (
             <p>Loading plants...</p>
           ) : (
             plants.slice(0, 4).map((plant) => (
-              <div className="feature-card" key={plant._id}>
-                <div className="feature-icon">🌱</div>
+              <div className="feature-card plant-feature-card" key={plant._id}>
+                <img
+                  className="plant-feature-image"
+                  src={plant.imageUrl || 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800'}
+                  alt={plant.name}
+                />
                 <h3>{plant.name}</h3>
                 <p>Rs.{plant.price}</p>
                 <button 
@@ -144,6 +153,37 @@ function LandingPage() {
               </div>
             ))
           )}
+        </div>
+      </section>
+
+      {/* Discounts Section */}
+      <section className="discounts" id="discounts">
+        <div className="discounts-content">
+          <span className="discounts-tag">Limited time</span>
+          <h2>Save on your first green friend</h2>
+          <p>Use the codes below at checkout — offers refresh every season.</p>
+
+          <div className="discount-cards">
+            <div className="discount-card">
+              <div className="discount-percent">15% OFF</div>
+              <p>For first-time customers</p>
+              <div className="discount-code">GREEN15</div>
+            </div>
+            <div className="discount-card">
+              <div className="discount-percent">20% OFF</div>
+              <p>On orders above Rs. 3000</p>
+              <div className="discount-code">BLOOM20</div>
+            </div>
+            <div className="discount-card">
+              <div className="discount-percent">FREE DELIVERY</div>
+              <p>On your first order</p>
+              <div className="discount-code">FIRSTFREE</div>
+            </div>
+          </div>
+
+          <button className="btn-primary" onClick={() => navigate('/plants')}>
+            Shop the sale
+          </button>
         </div>
       </section>
 
@@ -170,8 +210,12 @@ function LandingPage() {
         <p>Browse the plants you want and add to cart</p>
 
         <div className="category-cards">
-          {categories.map((category, index) => (
-            <div className="category-card" key={index}>
+          {categories.map((category) => (
+            <div
+              className="category-card"
+              key={category}
+              onClick={() => navigate(`/plants?category=${encodeURIComponent(category)}`)}
+            >
               {category}
             </div>
           ))}
@@ -184,6 +228,17 @@ function LandingPage() {
         <button className="btn-primary" onClick={() => navigate('/plants')}>
           Browse Plants
         </button>
+      </section>
+
+      {/* About Section */}
+      <section className="about" id="about">
+        <h2>About TheSecretGarden</h2>
+        <p>
+          We're a small team of plant lovers on a mission to make greenery
+          accessible to every home in Nepal. From easy-care succulents to
+          statement monsteras, we hand-pick every plant and pair it with the
+          care guidance you need to keep it thriving.
+        </p>
       </section>
 
       <Footer />

@@ -38,6 +38,13 @@ export const plantsAPI = {
   getByCategory: (category) => api.get(`/plants/category/${category}`),
 };
 
+// Categories API calls
+export const categoriesAPI = {
+  getAll: () => api.get('/categories'),
+  create: (name) => api.post('/categories', { name }),
+  delete: (id) => api.delete(`/categories/${id}`),
+};
+
 // Orders API calls
 export const ordersAPI = {
   create: (orderData) => api.post('/orders', orderData),

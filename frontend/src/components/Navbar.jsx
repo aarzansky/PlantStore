@@ -9,11 +9,30 @@ function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { getTotalItems } = useCart();
 
-  const navLinks = ["Plants", "Care", "Features", "About us"];
+  const navLinks = [
+    { label: "Plants", href: "#plants" },
+    { label: "Discounts", href: "#discounts" },
+    { label: "Care", href: "#features" },
+    { label: "Features", href: "#features" },
+    { label: "About us", href: "#about" },
+  ];
 
   const handleLogout = () => {
     logout();
     navigate('/');
+  };
+
+  // Nav links only make sense as in-page anchors when we're already on the
+  // landing page. From any other route, take the user home first, then
+  // let the browser jump to the section once it has rendered.
+  const handleNavLinkClick = (e, href) => {
+    if (window.location.pathname !== '/') {
+      e.preventDefault();
+      navigate('/');
+      setTimeout(() => {
+        document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
   };
 
   return (
@@ -24,8 +43,12 @@ function Navbar() {
 
       <div className="navbar-links">
         {navLinks.map((link, index) => (
-          <a key={index} href={`#${link.toLowerCase().replace(" ", "")}`}>
-            {link}
+          <a
+            key={index}
+            href={link.href}
+            onClick={(e) => handleNavLinkClick(e, link.href)}
+          >
+            {link.label}
           </a>
         ))}
       </div>

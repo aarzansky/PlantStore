@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { adminAPI } from '../services/api';
+import { adminAPI, categoriesAPI } from '../services/api';
 import AdminLayout from '../components/AdminLayout';
 import './AdminPlants.css';
 
@@ -17,20 +17,17 @@ function AdminPlants() {
     stock: '',
   });
 
-  const categories = [
-    'Indoor Plants',
-    'Outdoor Plants',
-    'Succulents',
-    'Flowering Plants',
-    'Aquatic Plants',
-    'Creepers',
-    'Fruits',
-    'Pots',
-    'Plant Care'
-  ];
+  // Full category objects ({_id, name}) so we can delete by id...
+  const [categoriesList, setCategoriesList] = useState([]);
+  // ...and just the names, for the plant form's <select>
+  const categories = categoriesList.map((cat) => cat.name);
+
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [categoryError, setCategoryError] = useState('');
 
   useEffect(() => {
     fetchPlants();
+    fetchCategories();
   }, []);
 
   const fetchPlants = async () => {
@@ -41,6 +38,39 @@ function AdminPlants() {
       console.error('Error fetching plants:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const response = await categoriesAPI.getAll();
+      setCategoriesList(response.data);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCategoryName.trim()) return;
+    try {
+      setCategoryError('');
+      await categoriesAPI.create(newCategoryName.trim());
+      setNewCategoryName('');
+      fetchCategories();
+    } catch (error) {
+      setCategoryError(error.response?.data?.message || 'Error adding category');
+    }
+  };
+
+  const handleDeleteCategory = async (category) => {
+    if (!window.confirm(`Delete category "${category.name}"?`)) return;
+    try {
+      setCategoryError('');
+      await categoriesAPI.delete(category._id);
+      fetchCategories();
+    } catch (error) {
+      setCategoryError(error.response?.data?.message || 'Error deleting category');
     }
   };
 
@@ -116,6 +146,38 @@ function AdminPlants() {
           <button className="btn-primary" onClick={() => setShowForm(true)}>
             + Add New Plant
           </button>
+        </div>
+
+        <div className="category-manager">
+          <h2>Categories</h2>
+          <form className="category-add-form" onSubmit={handleAddCategory}>
+            <input
+              type="text"
+              placeholder="New category name"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+            />
+            <button type="submit" className="btn-secondary">Add Category</button>
+          </form>
+          {categoryError && <p className="category-error">{categoryError}</p>}
+          <div className="category-pills">
+            {categoriesList.map((category) => (
+              <span className="category-pill" key={category._id}>
+                {category.name}
+                <button
+                  type="button"
+                  className="category-pill-remove"
+                  onClick={() => handleDeleteCategory(category)}
+                  aria-label={`Delete ${category.name}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+            {categoriesList.length === 0 && (
+              <p className="category-empty">No categories yet — add one above.</p>
+            )}
+          </div>
         </div>
 
         {showForm && (

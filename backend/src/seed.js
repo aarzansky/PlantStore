@@ -1,12 +1,25 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Plant = require('./models/Plant');
+const Category = require('./models/Category');
 const connectDB = require('./config/db');
 
 dotenv.config();
 
 // Use the same connectDB function
 connectDB();
+
+const categories = [
+  'Pots',
+  'Outdoor Plants',
+  'Plant Care',
+  'Aquatic Plants',
+  'Creepers',
+  'Succulents',
+  'Fruits',
+  'Indoor Plants',
+  'Flowering Plants',
+];
 
 const plants = [
   {
@@ -87,7 +100,13 @@ const seedDatabase = async () => {
   try {
     await Plant.deleteMany({});
     console.log('🗑️  Cleared existing plants');
-    
+
+    await Category.deleteMany({});
+    console.log('🗑️  Cleared existing categories');
+
+    await Category.insertMany(categories.map((name) => ({ name })));
+    console.log('✅ Categories seeded successfully!');
+
     await Plant.insertMany(plants);
     console.log('✅ Plants seeded successfully!');
     
