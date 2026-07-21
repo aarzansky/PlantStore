@@ -10,11 +10,12 @@ function Navbar() {
   const { getTotalItems } = useCart();
 
   const navLinks = [
-    { label: "Plants", href: "#plants" },
+    { label: "Plants", href: "/plants" },
     { label: "Discounts", href: "#discounts" },
     { label: "Care", href: "#features" },
     { label: "Features", href: "#features" },
     { label: "About us", href: "#about" },
+    { label: "Contact", href: "/contact" },
   ];
 
   const handleLogout = () => {
@@ -26,6 +27,14 @@ function Navbar() {
   // landing page. From any other route, take the user home first, then
   // let the browser jump to the section once it has rendered.
   const handleNavLinkClick = (e, href) => {
+    // Real routes (like the Plants page) navigate normally instead of
+    // being treated as an in-page anchor.
+    if (!href.startsWith('#')) {
+      e.preventDefault();
+      navigate(href);
+      return;
+    }
+
     if (window.location.pathname !== '/') {
       e.preventDefault();
       navigate('/');

@@ -95,7 +95,7 @@ function MyOrdersPage() {
                 <div className="order-card-bottom">
                   <span className="order-total">Rs.{order.totalAmount.toFixed(2)}</span>
                   <div className="order-card-actions">
-                    {order.status === 'pending' && (
+                    {(order.status === 'pending' || order.status === 'processing') && (
                       <button className="btn-cancel" onClick={() => handleCancel(order._id)}>
                         Cancel Order
                       </button>

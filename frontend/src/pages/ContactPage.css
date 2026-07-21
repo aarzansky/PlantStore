@@ -1,0 +1,60 @@
+.contact-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 50px 24px 70px;
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.contact-header h1 {
+  color: #2d5a27;
+  margin-bottom: 10px;
+}
+
+.contact-header p {
+  color: #666;
+  font-size: 15px;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.contact-card {
+  background: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  padding: 28px 20px;
+  text-align: center;
+}
+
+.contact-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.contact-card h3 {
+  color: #333;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.contact-value {
+  color: #2d5a27;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 6px;
+}
+
+.contact-note {
+  color: #888;
+  font-size: 13px;
+}

@@ -55,6 +55,16 @@ const OrderSchema = new mongoose.Schema({
     enum: ['unpaid', 'paid'],
     default: 'unpaid',
   },
+  // Khalti's payment identifier for this order, used to verify status via the lookup API
+  khaltiPidx: {
+    type: String,
+    default: null,
+  },
+  // Khalti's transaction id, only set once payment is confirmed as Completed
+  khaltiTransactionId: {
+    type: String,
+    default: null,
+  },
   status: {
     type: String,
     enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],

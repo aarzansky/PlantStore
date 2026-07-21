@@ -19,6 +19,7 @@ function CheckoutPage() {
     city: user?.city || '',
     country: user?.country || 'Nepal',
   });
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -58,12 +59,26 @@ function CheckoutPage() {
 
     setSubmitting(true);
     try {
+      const orderItems = cartItems.map((item) => ({
+        _id: item._id,
+        name: item.name,
+        quantity: item.quantity,
+      }));
+
+      if (paymentMethod === 'khalti') {
+        const response = await ordersAPI.initiateKhalti({
+          items: orderItems,
+          shippingAddress: form,
+        });
+
+        // Cart is cleared once payment is confirmed as completed, not before -
+        // if the user abandons the Khalti page, the order still exists as 'unpaid'.
+        window.location.href = response.data.payment_url;
+        return;
+      }
+
       const response = await ordersAPI.create({
-        items: cartItems.map((item) => ({
-          _id: item._id,
-          name: item.name,
-          quantity: item.quantity,
-        })),
+        items: orderItems,
         shippingAddress: form,
         paymentMethod: 'cod',
       });
@@ -72,7 +87,6 @@ function CheckoutPage() {
       navigate(`/orders/${response.data.order._id}`, { state: { justPlaced: true } });
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong placing your order.');
-    } finally {
       setSubmitting(false);
     }
   };
@@ -148,18 +162,28 @@ function CheckoutPage() {
 
             <h2>Payment Method</h2>
             <div className="payment-options">
-              <label className="payment-option selected">
-                <input type="radio" name="paymentMethod" checked readOnly />
+              <label className={`payment-option ${paymentMethod === 'cod' ? 'selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  checked={paymentMethod === 'cod'}
+                  onChange={() => setPaymentMethod('cod')}
+                />
                 <div>
                   <span className="payment-title">Cash on Delivery</span>
                   <span className="payment-subtitle">Pay when your order arrives</span>
                 </div>
               </label>
-              <label className="payment-option disabled">
-                <input type="radio" name="paymentMethod" disabled />
+              <label className={`payment-option ${paymentMethod === 'khalti' ? 'selected' : ''}`}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  checked={paymentMethod === 'khalti'}
+                  onChange={() => setPaymentMethod('khalti')}
+                />
                 <div>
                   <span className="payment-title">Khalti</span>
-                  <span className="payment-subtitle">Coming soon</span>
+                  <span className="payment-subtitle">Pay instantly with your Khalti wallet</span>
                 </div>
               </label>
             </div>
@@ -167,7 +191,13 @@ function CheckoutPage() {
             {error && <p className="checkout-error">{error}</p>}
 
             <button type="submit" className="checkout-btn" disabled={submitting}>
-              {submitting ? 'Placing Order...' : 'Place Order'}
+              {submitting
+                ? paymentMethod === 'khalti'
+                  ? 'Redirecting to Khalti...'
+                  : 'Placing Order...'
+                : paymentMethod === 'khalti'
+                ? 'Pay with Khalti'
+                : 'Place Order'}
             </button>
           </form>
 

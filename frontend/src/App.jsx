@@ -12,9 +12,15 @@ import PlantsPage from './pages/PlantsPage';
 import PlantDetailPage from './pages/PlantDetailPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
+import KhaltiCallbackPage from './pages/KhaltiCallbackPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import OrderReceiptPage from './pages/OrderReceiptPage';
 import ProfilePage from './pages/ProfilePage';
+import StaticPage from './pages/StaticPage';
+import ContactPage from './pages/ContactPage';
+import FAQPage from './pages/FAQPage';
+import AboutPage from './pages/AboutPage';
+import UserGuidesPage from './pages/UserGuidesPage';
 
 // Admin Pages
 import AdminDashboard from './pages/AdminDashboard';
@@ -37,9 +43,21 @@ function App() {
             <Route path="/plant/:id" element={<PlantDetailPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/khalti/callback" element={<KhaltiCallbackPage />} />
             <Route path="/orders" element={<MyOrdersPage />} />
             <Route path="/orders/:id" element={<OrderReceiptPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+
+            {/* Footer placeholder pages - simple static pages for now */}
+            <Route path="/accessories" element={<StaticPage title="Accessories" description="Pots, tools, and plant accessories are on their way." />} />
+            <Route path="/gifts" element={<StaticPage title="Gifts" description="Plant gift sets and bundles are coming soon." />} />
+            <Route path="/seeds" element={<StaticPage title="Seeds" description="Our seed collection is being planted - check back soon." />} />
+            <Route path="/guides" element={<UserGuidesPage />} />
+            <Route path="/blog" element={<StaticPage title="Blog" description="Plant stories and tips from our team, coming soon." />} />
+            <Route path="/faqs" element={<FAQPage />} />
+            <Route path="/plant-care" element={<StaticPage title="Plant Care" description="Care tips to keep your plants thriving are coming soon." />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminDashboard />} />

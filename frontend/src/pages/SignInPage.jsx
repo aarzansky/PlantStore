@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -6,11 +6,18 @@ import './SignInPage.css';
 
 function SignInPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated, loading: authLoading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Already logged in? Don't let them sit on the sign-in page.
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,6 +33,10 @@ function SignInPage() {
     }
     setLoading(false);
   };
+
+  if (authLoading || isAuthenticated) {
+    return null;
+  }
 
   return (
     <>

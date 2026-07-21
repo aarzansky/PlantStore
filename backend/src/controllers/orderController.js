@@ -1,5 +1,6 @@
 const Order = require('../models/Order');
 const Plant = require('../models/Plant');
+const { initiateKhaltiPayment, lookupKhaltiPayment } = require('../utils/khalti');
 
 // Generate a human-friendly order number, e.g. ORD-4F2A9C
 const generateOrderNumber = () => {
@@ -7,54 +8,77 @@ const generateOrderNumber = () => {
   return `ORD-${random}`;
 };
 
-// @desc    Create a new order
+// Shared helper: validates cart items against the DB, builds order line items,
+// computes the total, and reserves stock. Throws { status, message } on failure.
+const buildOrderFromCart = async (items) => {
+  if (!items || items.length === 0) {
+    throw { status: 400, message: 'No items in order' };
+  }
+
+  const orderItems = [];
+  let totalAmount = 0;
+
+  for (const item of items) {
+    const plant = await Plant.findById(item._id || item.plant);
+    if (!plant) {
+      throw { status: 404, message: `Plant not found: ${item.name || item._id}` };
+    }
+    if (plant.stock < item.quantity) {
+      throw { status: 400, message: `Not enough stock for ${plant.name}. Only ${plant.stock} left.` };
+    }
+
+    orderItems.push({
+      plant: plant._id,
+      name: plant.name,
+      price: plant.price,
+      quantity: item.quantity,
+    });
+
+    totalAmount += plant.price * item.quantity;
+  }
+
+  // Reserve stock
+  for (const item of orderItems) {
+    await Plant.findByIdAndUpdate(item.plant, { $inc: { stock: -item.quantity } });
+  }
+
+  return { orderItems, totalAmount };
+};
+
+const restoreStock = async (order) => {
+  for (const item of order.items) {
+    await Plant.findByIdAndUpdate(item.plant, { $inc: { stock: item.quantity } });
+  }
+};
+
+const validateShippingAddress = (shippingAddress) => {
+  return (
+    shippingAddress &&
+    shippingAddress.fullName &&
+    shippingAddress.phone &&
+    shippingAddress.address &&
+    shippingAddress.city
+  );
+};
+
+// @desc    Create a new order (Cash on Delivery only — Khalti uses /khalti/initiate)
 // @route   POST /api/orders
 // @access  Private
 const createOrder = async (req, res) => {
   try {
     const { items, shippingAddress, paymentMethod } = req.body;
 
-    if (!items || items.length === 0) {
-      return res.status(400).json({ message: 'No items in order' });
+    if (paymentMethod === 'khalti') {
+      return res.status(400).json({
+        message: 'Use /api/orders/khalti/initiate to start a Khalti payment.',
+      });
     }
 
-    if (
-      !shippingAddress ||
-      !shippingAddress.fullName ||
-      !shippingAddress.phone ||
-      !shippingAddress.address ||
-      !shippingAddress.city
-    ) {
+    if (!validateShippingAddress(shippingAddress)) {
       return res.status(400).json({ message: 'Please provide complete shipping details' });
     }
 
-    // Look up real plant data so price/stock can't be tampered with from the client
-    const orderItems = [];
-    let totalAmount = 0;
-
-    for (const item of items) {
-      const plant = await Plant.findById(item._id || item.plant);
-      if (!plant) {
-        return res.status(404).json({ message: `Plant not found: ${item.name || item._id}` });
-      }
-      if (plant.stock < item.quantity) {
-        return res.status(400).json({ message: `Not enough stock for ${plant.name}. Only ${plant.stock} left.` });
-      }
-
-      orderItems.push({
-        plant: plant._id,
-        name: plant.name,
-        price: plant.price,
-        quantity: item.quantity,
-      });
-
-      totalAmount += plant.price * item.quantity;
-    }
-
-    // Reserve stock
-    for (const item of orderItems) {
-      await Plant.findByIdAndUpdate(item.plant, { $inc: { stock: -item.quantity } });
-    }
+    const { orderItems, totalAmount } = await buildOrderFromCart(items);
 
     const order = await Order.create({
       orderNumber: generateOrderNumber(),
@@ -62,7 +86,7 @@ const createOrder = async (req, res) => {
       items: orderItems,
       totalAmount,
       shippingAddress,
-      paymentMethod: paymentMethod === 'khalti' ? 'khalti' : 'cod',
+      paymentMethod: 'cod',
     });
 
     res.status(201).json({
@@ -72,7 +96,114 @@ const createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: error.message });
+    res.status(error.status || 500).json({ message: error.message || 'Something went wrong' });
+  }
+};
+
+// @desc    Create an order and start a Khalti payment, returning the payment_url to redirect to
+// @route   POST /api/orders/khalti/initiate
+// @access  Private
+const initiateKhaltiOrderPayment = async (req, res) => {
+  let order;
+  try {
+    const { items, shippingAddress } = req.body;
+
+    if (!validateShippingAddress(shippingAddress)) {
+      return res.status(400).json({ message: 'Please provide complete shipping details' });
+    }
+
+    const { orderItems, totalAmount } = await buildOrderFromCart(items);
+
+    order = await Order.create({
+      orderNumber: generateOrderNumber(),
+      user: req.user._id,
+      items: orderItems,
+      totalAmount,
+      shippingAddress,
+      paymentMethod: 'khalti',
+      paymentStatus: 'unpaid',
+    });
+
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    const khaltiResponse = await initiateKhaltiPayment({
+      amount: Math.round(totalAmount * 100), // paisa
+      purchaseOrderId: order.orderNumber,
+      purchaseOrderName: `PlantStore Order ${order.orderNumber}`,
+      returnUrl: `${frontendUrl}/payment/khalti/callback`,
+      websiteUrl: frontendUrl,
+      customerInfo: {
+        name: shippingAddress.fullName,
+        email: req.user.email,
+        phone: shippingAddress.phone,
+      },
+    });
+
+    order.khaltiPidx = khaltiResponse.pidx;
+    await order.save();
+
+    res.status(201).json({
+      success: true,
+      order,
+      payment_url: khaltiResponse.payment_url,
+    });
+  } catch (error) {
+    console.error(error);
+    // Roll back the order + reserved stock if Khalti initiation failed
+    if (order) {
+      await restoreStock(order);
+      await Order.findByIdAndDelete(order._id);
+    }
+    res.status(error.status || 500).json({ message: error.message || 'Failed to start Khalti payment' });
+  }
+};
+
+// @desc    Verify a Khalti payment after the user is redirected back, and update the order
+// @route   GET /api/orders/khalti/verify?pidx=...
+// @access  Private
+const verifyKhaltiOrderPayment = async (req, res) => {
+  try {
+    const { pidx } = req.query;
+    if (!pidx) {
+      return res.status(400).json({ message: 'pidx is required' });
+    }
+
+    const order = await Order.findOne({ khaltiPidx: pidx });
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found for this payment' });
+    }
+
+    if (order.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+      return res.status(403).json({ message: 'Not authorized to view this order' });
+    }
+
+    const lookup = await lookupKhaltiPayment(pidx);
+
+    // Only trust Khalti's lookup status, never the redirect params alone
+    if (lookup.status === 'Completed') {
+      if (order.paymentStatus !== 'paid') {
+        order.paymentStatus = 'paid';
+        order.khaltiTransactionId = lookup.transaction_id;
+        if (order.status === 'pending') {
+          order.status = 'processing';
+        }
+        order.updatedAt = Date.now();
+        await order.save();
+      }
+    } else if (['Expired', 'User canceled', 'Refunded'].includes(lookup.status)) {
+      if (order.status !== 'cancelled') {
+        order.status = 'cancelled';
+        order.updatedAt = Date.now();
+        await order.save();
+        await restoreStock(order);
+      }
+    }
+    // Pending / Initiated: leave the order as-is, frontend can poll or tell the user to wait
+
+    res.json({ success: true, order, khaltiStatus: lookup.status });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 500).json({ message: error.message || 'Failed to verify Khalti payment' });
   }
 };
 
@@ -109,7 +240,7 @@ const getOrderById = async (req, res) => {
   }
 };
 
-// @desc    Cancel an order (only while it's still pending)
+// @desc    Cancel an order (only while it's still pending or processing)
 // @route   PUT /api/orders/:id/cancel
 // @access  Private
 const cancelOrder = async (req, res) => {
@@ -123,7 +254,7 @@ const cancelOrder = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to cancel this order' });
     }
 
-    if (order.status !== 'pending') {
+    if (order.status !== 'pending' && order.status !== 'processing') {
       return res.status(400).json({ message: `Order can no longer be cancelled (status: ${order.status})` });
     }
 
@@ -142,4 +273,11 @@ const cancelOrder = async (req, res) => {
   }
 };
 
-module.exports = { createOrder, getMyOrders, getOrderById, cancelOrder };
+module.exports = {
+  createOrder,
+  initiateKhaltiOrderPayment,
+  verifyKhaltiOrderPayment,
+  getMyOrders,
+  getOrderById,
+  cancelOrder,
+};

@@ -45,30 +45,31 @@ export const categoriesAPI = {
   delete: (id) => api.delete(`/categories/${id}`),
 };
 
-// Orders API calls
 export const ordersAPI = {
   create: (orderData) => api.post('/orders', orderData),
   getMyOrders: () => api.get('/orders'),
   getById: (id) => api.get(`/orders/${id}`),
   cancel: (id) => api.put(`/orders/${id}/cancel`),
+  // Khalti payment flow
+  initiateKhalti: (orderData) => api.post('/orders/khalti/initiate', orderData),
+  verifyKhalti: (pidx) => api.get('/orders/khalti/verify', { params: { pidx } }),
 };
 
-// Admin API calls - ADD THIS SECTION
 export const adminAPI = {
   // Dashboard
   getStats: () => api.get('/admin/stats'),
-  
+
   // Plant Management
   getPlants: () => api.get('/admin/plants'),
   createPlant: (plantData) => api.post('/admin/plants', plantData),
   updatePlant: (id, plantData) => api.put(`/admin/plants/${id}`, plantData),
   deletePlant: (id) => api.delete(`/admin/plants/${id}`),
-  
+
   // User Management
   getUsers: () => api.get('/admin/users'),
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
   makeAdmin: (id) => api.put(`/admin/users/${id}/make-admin`),
-  
+
   // Order Management
   getOrders: () => api.get('/admin/orders'),
   getOrderById: (id) => api.get(`/admin/orders/${id}`),

@@ -43,6 +43,12 @@
   color: #2d5a27;
 }
 
+.footer-link-disabled {
+  font-size: 14px;
+  color: #b7b7b7;
+  cursor: default;
+}
+
 
 .footer-bottom {
   text-align: center;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -6,9 +6,16 @@ import './SignUpPage.css';
 
 function SignUpPage() {
   const navigate = useNavigate();
-  const { register } = useAuth();
+  const { register, isAuthenticated, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Already logged in? Don't let them sit on the sign-up page.
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate('/', { replace: true });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
   
   const [formData, setFormData] = useState({
     firstName: '',
@@ -72,6 +79,10 @@ function SignUpPage() {
     }
     setLoading(false);
   };
+
+  if (authLoading || isAuthenticated) {
+    return null;
+  }
 
   return (
     <>
