@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { adminAPI, categoriesAPI } from '../services/api';
 import AdminLayout from '../components/AdminLayout';
 import './AdminPlants.css';
@@ -10,11 +11,12 @@ function AdminPlants() {
   const [editingPlant, setEditingPlant] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
-    category: '',
+    categories: [],
     price: '',
     description: '',
     imageUrl: '',
     stock: '',
+    discountPercent: '',
   });
 
   // Full category objects ({_id, name}) so we can delete by id...
@@ -81,20 +83,36 @@ function AdminPlants() {
     });
   };
 
+  const handleCategoryToggle = (categoryName) => {
+    setFormData((prev) => {
+      const alreadySelected = prev.categories.includes(categoryName);
+      return {
+        ...prev,
+        categories: alreadySelected
+          ? prev.categories.filter((name) => name !== categoryName)
+          : [...prev.categories, categoryName],
+      };
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.categories.length === 0) {
+      toast.error('Select at least one category');
+      return;
+    }
     try {
       if (editingPlant) {
         await adminAPI.updatePlant(editingPlant._id, formData);
-        alert('Plant updated successfully!');
+        toast.success('Plant updated successfully!');
       } else {
         await adminAPI.createPlant(formData);
-        alert('Plant added successfully!');
+        toast.success('Plant added successfully!');
       }
       resetForm();
       fetchPlants();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error saving plant');
+      toast.error(error.response?.data?.message || 'Error saving plant');
     }
   };
 
@@ -102,11 +120,12 @@ function AdminPlants() {
     setEditingPlant(plant);
     setFormData({
       name: plant.name,
-      category: plant.category,
+      categories: plant.categories || [],
       price: plant.price,
       description: plant.description,
       imageUrl: plant.imageUrl || '',
       stock: plant.stock,
+      discountPercent: plant.discountPercent || '',
     });
     setShowForm(true);
   };
@@ -115,10 +134,10 @@ function AdminPlants() {
     if (window.confirm('Are you sure you want to delete this plant?')) {
       try {
         await adminAPI.deletePlant(id);
-        alert('Plant deleted successfully!');
+        toast.success('Plant deleted successfully!');
         fetchPlants();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error deleting plant');
+        toast.error(error.response?.data?.message || 'Error deleting plant');
       }
     }
   };
@@ -128,11 +147,12 @@ function AdminPlants() {
     setEditingPlant(null);
     setFormData({
       name: '',
-      category: '',
+      categories: [],
       price: '',
       description: '',
       imageUrl: '',
       stock: '',
+      discountPercent: '',
     });
   };
 
@@ -197,18 +217,27 @@ function AdminPlants() {
                 </div>
 
                 <div className="form-group">
-                  <label>Category</label>
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((cat) => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
+                  <label>Categories</label>
+                  <div className="category-checkboxes">
+                    {categories.length === 0 ? (
+                      <p className="form-hint">Add a category above first.</p>
+                    ) : (
+                      categories.map((cat) => (
+                        <label key={cat} className="category-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={formData.categories.includes(cat)}
+                            onChange={() => handleCategoryToggle(cat)}
+                          />
+                          {cat}
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  <p className="form-hint">
+                    Select every category this plant belongs to. Tag it "Discounts" to have it show up
+                    from the navbar's Discounts link.
+                  </p>
                 </div>
 
                 <div className="form-row">
@@ -257,6 +286,22 @@ function AdminPlants() {
                   />
                 </div>
 
+                <div className="form-group">
+                  <label>Discount (%)</label>
+                  <input
+                    type="number"
+                    name="discountPercent"
+                    value={formData.discountPercent}
+                    onChange={handleInputChange}
+                    min="0"
+                    max="100"
+                    placeholder="0"
+                  />
+                  <p className="form-hint">
+                    Set above 0 to feature this plant in the Discounts section on the landing page.
+                  </p>
+                </div>
+
                 <div className="form-actions">
                   <button type="submit" className="btn-primary">
                     {editingPlant ? 'Update Plant' : 'Add Plant'}
@@ -274,9 +319,12 @@ function AdminPlants() {
           {plants.map((plant) => (
             <div className="plant-card-admin" key={plant._id}>
               <img src={plant.imageUrl} alt={plant.name} />
+              {plant.discountPercent > 0 && (
+                <span className="plant-discount-badge">{plant.discountPercent}% OFF</span>
+              )}
               <div className="plant-card-body">
                 <h3>{plant.name}</h3>
-                <p className="plant-category">{plant.category}</p>
+                <p className="plant-category">{(plant.categories || []).join(', ')}</p>
                 <p className="plant-price">Rs.{plant.price}</p>
                 <p className="plant-stock">Stock: {plant.stock}</p>
                 <div className="plant-actions">

@@ -20,6 +20,13 @@ function KhaltiCallbackPage() {
   useEffect(() => {
     const pidx = searchParams.get('pidx');
 
+    // Khalti appends pidx, transaction_id, amount, status, etc. to this URL.
+    // We only need pidx (and only for this one lookup) - strip the query
+    // string from the address bar right away so none of that sits visible
+    // in the browser header/history. replace: true avoids adding a back-
+    // button entry for the "dirty" URL.
+    navigate('/payment/khalti/callback', { replace: true });
+
     if (!pidx) {
       setState('failed');
       setMessage('Missing payment reference. If money was deducted, check My Orders before retrying.');

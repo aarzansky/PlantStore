@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { ordersAPI } from '../services/api';
 import Navbar from '../components/Navbar';
@@ -36,9 +37,10 @@ function MyOrdersPage() {
     if (!window.confirm('Cancel this order?')) return;
     try {
       await ordersAPI.cancel(id);
+      toast.success('Order cancelled.');
       fetchOrders();
     } catch (error) {
-      alert(error.response?.data?.message || 'Could not cancel this order.');
+      toast.error(error.response?.data?.message || 'Could not cancel this order.');
     }
   };
 

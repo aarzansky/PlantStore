@@ -62,6 +62,11 @@
 .status-select.delivered { background: #28a745; color: white; }
 .status-select.cancelled { background: #f8d7da; color: #721c24; }
 
+.status-select.status-locked {
+  display: inline-block;
+  cursor: default;
+}
+
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

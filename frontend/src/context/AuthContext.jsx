@@ -67,6 +67,19 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Update profile function
+  const updateProfile = async (userData) => {
+    setError(null);
+    try {
+      const response = await authAPI.updateProfile(userData);
+      setUser((prev) => ({ ...prev, ...response.data }));
+      return { success: true };
+    } catch (err) {
+      setError(err.response?.data?.message || 'Profile update failed');
+      return { success: false, error: err.response?.data?.message || 'Profile update failed' };
+    }
+  };
+
   // Logout function
   const logout = () => {
     localStorage.removeItem('token');
@@ -81,6 +94,7 @@ export const AuthProvider = ({ children }) => {
     login,
     register,
     logout,
+    updateProfile,
     isAuthenticated: !!user,
   };
 

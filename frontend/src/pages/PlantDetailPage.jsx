@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useCart } from '../context/CartContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -32,7 +33,7 @@ function PlantDetailPage() {
   const handleAddToCart = () => {
     if (plant) {
       addToCart(plant, quantity);
-      alert(`${plant.name} added to cart!`);
+      toast.success(`${plant.name} added to cart!`);
     }
   };
 
@@ -72,7 +73,7 @@ function PlantDetailPage() {
           
           <div className="plant-detail-info">
             <h1>{plant.name}</h1>
-            <p className="plant-category">{plant.category}</p>
+            <p className="plant-category">{(plant.categories || []).join(', ')}</p>
             <p className="plant-price">Rs.{plant.price}</p>
             <p className="plant-description">{plant.description}</p>
             

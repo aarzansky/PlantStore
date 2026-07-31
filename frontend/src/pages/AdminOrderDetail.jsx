@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { adminAPI } from '../services/api';
 import AdminLayout from '../components/AdminLayout';
 import './AdminOrderDetail.css';
@@ -33,9 +34,10 @@ function AdminOrderDetail() {
     setUpdating(true);
     try {
       await adminAPI.updateOrderStatus(id, status);
+      toast.success('Order status updated!');
       fetchOrder();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error updating order');
+      toast.error(error.response?.data?.message || 'Error updating order');
     } finally {
       setUpdating(false);
     }
@@ -70,18 +72,24 @@ function AdminOrderDetail() {
               <h1>{order.orderNumber}</h1>
               <p className="detail-date">{new Date(order.createdAt).toLocaleString()}</p>
             </div>
-            <select
-              value={order.status}
-              disabled={updating}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className={`status-select ${order.status}`}
-            >
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {status.charAt(0).toUpperCase() + status.slice(1)}
-                </option>
-              ))}
-            </select>
+            {order.status === 'delivered' || order.status === 'cancelled' ? (
+              <span className={`status-select status-locked ${order.status}`}>
+                {order.status.charAt(0).toUpperCase() + order.status.slice(1)} (locked)
+              </span>
+            ) : (
+              <select
+                value={order.status}
+                disabled={updating}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                className={`status-select ${order.status}`}
+              >
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div className="detail-grid">

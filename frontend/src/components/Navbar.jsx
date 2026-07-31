@@ -11,7 +11,7 @@ function Navbar() {
 
   const navLinks = [
     { label: "Plants", href: "/plants" },
-    { label: "Discounts", href: "#discounts" },
+    { label: "Discounts", href: "/plants?category=Discounts" },
     { label: "Care", href: "#features" },
     { label: "Features", href: "#features" },
     { label: "About us", href: "#about" },

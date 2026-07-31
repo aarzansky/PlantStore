@@ -1,6 +1,17 @@
 const Order = require('../models/Order');
 const Plant = require('../models/Plant');
+const KhaltiLog = require('../models/KhaltiLog');
 const { initiateKhaltiPayment, lookupKhaltiPayment } = require('../utils/khalti');
+
+// Best-effort audit logging - a logging failure should never break a payment flow,
+// so this only ever console.errors and never throws.
+const logKhaltiEvent = async (fields) => {
+  try {
+    await KhaltiLog.create(fields);
+  } catch (err) {
+    console.error('Failed to write KhaltiLog entry:', err);
+  }
+};
 
 // Generate a human-friendly order number, e.g. ORD-4F2A9C
 const generateOrderNumber = () => {
@@ -126,7 +137,7 @@ const initiateKhaltiOrderPayment = async (req, res) => {
 
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-    const khaltiResponse = await initiateKhaltiPayment({
+    const initiatePayload = {
       amount: Math.round(totalAmount * 100), // paisa
       purchaseOrderId: order.orderNumber,
       purchaseOrderName: `PlantStore Order ${order.orderNumber}`,
@@ -137,6 +148,31 @@ const initiateKhaltiOrderPayment = async (req, res) => {
         email: req.user.email,
         phone: shippingAddress.phone,
       },
+    };
+
+    let khaltiResponse;
+    try {
+      khaltiResponse = await initiateKhaltiPayment(initiatePayload);
+    } catch (khaltiError) {
+      await logKhaltiEvent({
+        order: order._id,
+        pidx: null,
+        event: 'initiate',
+        requestPayload: initiatePayload,
+        responsePayload: khaltiError.khaltiResponse || null,
+        success: false,
+        errorMessage: khaltiError.message,
+      });
+      throw khaltiError;
+    }
+
+    await logKhaltiEvent({
+      order: order._id,
+      pidx: khaltiResponse.pidx,
+      event: 'initiate',
+      requestPayload: initiatePayload,
+      responsePayload: khaltiResponse,
+      success: true,
     });
 
     order.khaltiPidx = khaltiResponse.pidx;
@@ -177,7 +213,30 @@ const verifyKhaltiOrderPayment = async (req, res) => {
       return res.status(403).json({ message: 'Not authorized to view this order' });
     }
 
-    const lookup = await lookupKhaltiPayment(pidx);
+    let lookup;
+    try {
+      lookup = await lookupKhaltiPayment(pidx);
+    } catch (khaltiError) {
+      await logKhaltiEvent({
+        order: order._id,
+        pidx,
+        event: 'lookup',
+        requestPayload: { pidx },
+        responsePayload: khaltiError.khaltiResponse || null,
+        success: false,
+        errorMessage: khaltiError.message,
+      });
+      throw khaltiError;
+    }
+
+    await logKhaltiEvent({
+      order: order._id,
+      pidx,
+      event: 'lookup',
+      requestPayload: { pidx },
+      responsePayload: lookup,
+      success: true,
+    });
 
     // Only trust Khalti's lookup status, never the redirect params alone
     if (lookup.status === 'Completed') {

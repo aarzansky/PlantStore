@@ -60,6 +60,12 @@
   border-color: #f5c6cb;
 }
 
+.status-select.status-locked {
+  display: inline-block;
+  cursor: default;
+}
+
+
 .row-actions {
   display: flex;
   gap: 8px;

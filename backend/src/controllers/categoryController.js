@@ -1,5 +1,6 @@
 const Category = require('../models/Category');
 const Plant = require('../models/Plant');
+const { DISCOUNTS_CATEGORY_NAME } = require('../../constants');
 
 // @desc    Get all categories
 // @route   GET /api/categories
@@ -48,7 +49,13 @@ const deleteCategory = async (req, res) => {
       return res.status(404).json({ message: 'Category not found' });
     }
 
-    const plantsUsingCategory = await Plant.countDocuments({ category: category.name });
+    if (category.name.toLowerCase() === DISCOUNTS_CATEGORY_NAME.toLowerCase()) {
+      return res.status(400).json({
+        message: `"${DISCOUNTS_CATEGORY_NAME}" is a reserved category used by the navbar's Discounts link and can't be deleted.`,
+      });
+    }
+
+    const plantsUsingCategory = await Plant.countDocuments({ categories: category.name });
     if (plantsUsingCategory > 0) {
       return res.status(400).json({
         message: `Cannot delete "${category.name}" — ${plantsUsingCategory} plant(s) still use it. Reassign them first.`,

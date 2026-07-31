@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { adminAPI } from '../services/api';
 import AdminLayout from '../components/AdminLayout';
 import './AdminUsers.css';
@@ -26,10 +27,10 @@ function AdminUsers() {
     if (window.confirm('Are you sure you want to delete this user?')) {
       try {
         await adminAPI.deleteUser(id);
-        alert('User deleted successfully!');
+        toast.success('User deleted successfully!');
         fetchUsers();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error deleting user');
+        toast.error(error.response?.data?.message || 'Error deleting user');
       }
     }
   };
@@ -38,10 +39,10 @@ function AdminUsers() {
     if (window.confirm('Make this user an admin?')) {
       try {
         await adminAPI.makeAdmin(id);
-        alert('User is now an admin!');
+        toast.success('User is now an admin!');
         fetchUsers();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error making user admin');
+        toast.error(error.response?.data?.message || 'Error making user admin');
       }
     }
   };
@@ -87,14 +88,14 @@ function AdminUsers() {
                     <td>{new Date(user.createdAt).toLocaleDateString()}</td>
                     <td>
                       <div className="action-buttons">
-                        {!user.isAdmin && (
+                        {/* {!user.isAdmin && (
                           <button 
                             className="btn-make-admin"
                             onClick={() => handleMakeAdmin(user._id)}
                           >
                             Make Admin
                           </button>
-                        )}
+                        )} */}
                         <button 
                           className="btn-delete"
                           onClick={() => handleDelete(user._id)}

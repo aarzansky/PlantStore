@@ -109,4 +109,50 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getCurrentUser };
+// @desc    Update current user's profile info
+// @route   PUT /api/auth/me
+// @access  Private
+const updateCurrentUser = async (req, res) => {
+  try {
+    // Only allow editing these fields from this endpoint - never email, password,
+    // or isAdmin through here (those need their own dedicated, verified flows).
+    const { firstName, lastName, gender, country, city, address } = req.body;
+
+    if (!firstName || !firstName.trim()) {
+      return res.status(400).json({ message: 'First name is required' });
+    }
+    if (!lastName || !lastName.trim()) {
+      return res.status(400).json({ message: 'Last name is required' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    user.firstName = firstName.trim();
+    user.lastName = lastName.trim();
+    if (gender !== undefined) user.gender = gender;
+    if (country !== undefined) user.country = country;
+    if (city !== undefined) user.city = city;
+    if (address !== undefined) user.address = address;
+
+    await user.save();
+
+    res.json({
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      gender: user.gender,
+      country: user.country,
+      city: user.city,
+      address: user.address,
+      isAdmin: user.isAdmin,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = { registerUser, loginUser, getCurrentUser, updateCurrentUser };

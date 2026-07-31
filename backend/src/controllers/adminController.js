@@ -44,16 +44,17 @@ const getStats = async (req, res) => {
 // @access  Private/Admin
 const createPlant = async (req, res) => {
   try {
-    const { name, category, price, description, imageUrl, stock, rating } = req.body;
+    const { name, categories, price, description, imageUrl, stock, rating, discountPercent } = req.body;
 
     const plant = await Plant.create({
       name,
-      category,
+      categories,
       price,
       description,
       imageUrl: imageUrl || 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800',
       stock: stock || 10,
       rating: rating || 0,
+      discountPercent: discountPercent || 0,
     });
 
     res.status(201).json({ success: true, plant });
@@ -243,6 +244,12 @@ const updateOrderStatus = async (req, res) => {
     const order = await Order.findById(req.params.id);
     if (!order) {
       return res.status(404).json({ message: 'Order not found' });
+    }
+
+    if (order.status === 'delivered' || order.status === 'cancelled') {
+      return res.status(400).json({
+        message: `Order is already ${order.status} and its status can no longer be changed`,
+      });
     }
 
     order.status = status;

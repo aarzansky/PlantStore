@@ -1,4 +1,3 @@
-
 .signin-page {
   display: flex;         
   min-height: 100vh;     }
@@ -58,18 +57,31 @@
 
 .signin-input {
   width: 100%;
+  box-sizing: border-box;
   padding: 14px 16px;
-  border: none;
-  border-radius: 8px;
-  background-color: #f2f2f2;
-  color:#1e3d1a;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 10px;
+  background-color: #f7f7f7;
+  color: #1e3d1a;
   font-size: 15px;
+  font-family: inherit;
   margin-bottom: 16px;
-  outline: none; 
+  outline: none;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.signin-input::placeholder {
+  color: #9a9a9a;
+}
+
+.signin-input:hover {
+  border-color: #c9d9c7;
 }
 
 .signin-input:focus {
-  background-color: #e8f5e9; /* light green when focused */
+  background-color: #ffffff;
+  border-color: #2d5a27;
+  box-shadow: 0 0 0 3px rgba(45, 90, 39, 0.12);
 }
 
 /* ── CONTINUE BUTTON ── */

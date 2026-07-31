@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { plantsAPI, categoriesAPI } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import './LandingPage.css';
 
 function LandingPage() {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
   const [plants, setPlants] = useState([]);
   const [categories, setCategories] = useState([]);
   const [testimonialIndex, setTestimonialIndex] = useState(0);
@@ -26,6 +28,9 @@ function LandingPage() {
     };
     fetchPlants();
   }, []);
+
+  // Plants an admin has marked down — these populate the Discounts section below
+  const discountedPlants = plants.filter((plant) => plant.discountPercent > 0);
 
   // Fetch categories from API so newly-added categories show up automatically
   useEffect(() => {
@@ -93,7 +98,7 @@ function LandingPage() {
       {/* Hero Section */}
       <section className="hero">
         <div className="hero-content">
-          <span className="hero-badge">🌿 Freshly picked, delivered with care</span>
+          <span className="hero-badge">Freshly picked, delivered with care</span>
           <h1>Welcome to The Secret Garden</h1>
           <h2>Your go-to destination for home plants</h2>
           <p>
@@ -101,12 +106,25 @@ function LandingPage() {
             solution for creating, launching, and managing your plant collection.
           </p>
           <div className="hero-actions">
-            <button className="btn-signup" onClick={() => navigate('/signup')}>
-              Join us now
-            </button>
-            <button className="btn-signin" onClick={() => navigate('/signin')}>
-              Already Joined?
-            </button>
+            {isAuthenticated ? (
+              <>
+                <button className="btn-signup" onClick={() => navigate('/plants')}>
+                  Browse Plants
+                </button>
+                <button className="btn-signin" onClick={() => navigate('/orders')}>
+                  My Orders
+                </button>
+              </>
+            ) : (
+              <>
+                <button className="btn-signup" onClick={() => navigate('/signup')}>
+                  Join us now
+                </button>
+                <button className="btn-signin" onClick={() => navigate('/signin')}>
+                  Already Joined?
+                </button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -157,35 +175,46 @@ function LandingPage() {
       </section>
 
       {/* Discounts Section */}
-      <section className="discounts" id="discounts">
-        <div className="discounts-content">
-          <span className="discounts-tag">Limited time</span>
-          <h2>Save on your first green friend</h2>
-          <p>Use the codes below at checkout — offers refresh every season.</p>
+      {!loading && discountedPlants.length > 0 && (
+        <section className="discounts" id="discounts">
+          <div className="discounts-content">
+            <span className="discounts-tag">Limited time</span>
+            <h2>Save on your first green friend</h2>
+            <p>Discounted plants, picked by us — prices already updated below.</p>
 
-          <div className="discount-cards">
-            <div className="discount-card">
-              <div className="discount-percent">15% OFF</div>
-              <p>For first-time customers</p>
-              <div className="discount-code">GREEN15</div>
+            <div className="discount-cards">
+              {discountedPlants.map((plant) => {
+                const discountedPrice = (
+                  plant.price * (1 - plant.discountPercent / 100)
+                ).toFixed(2);
+                return (
+                  <div
+                    className="discount-card"
+                    key={plant._id}
+                    onClick={() => navigate(`/plant/${plant._id}`)}
+                  >
+                    <img
+                      className="discount-card-image"
+                      src={plant.imageUrl || 'https://images.unsplash.com/photo-1614594975525-e45190c55d0b?w=800'}
+                      alt={plant.name}
+                    />
+                    <div className="discount-percent">{plant.discountPercent}% OFF</div>
+                    <p>{plant.name}</p>
+                    <div className="discount-price">
+                      <span className="discount-price-new">Rs.{discountedPrice}</span>
+                      <span className="discount-price-old">Rs.{plant.price}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
-            <div className="discount-card">
-              <div className="discount-percent">20% OFF</div>
-              <p>On orders above Rs. 3000</p>
-              <div className="discount-code">BLOOM20</div>
-            </div>
-            <div className="discount-card">
-              <div className="discount-percent">FREE DELIVERY</div>
-              <p>On your first order</p>
-              <div className="discount-code">FIRSTFREE</div>
-            </div>
+
+            <button className="btn-primary" onClick={() => navigate('/plants')}>
+              Shop the sale
+            </button>
           </div>
-
-          <button className="btn-primary" onClick={() => navigate('/plants')}>
-            Shop the sale
-          </button>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Testimonials Section */}
       <section className="testimonials">

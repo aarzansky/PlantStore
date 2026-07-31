@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import Navbar from '../components/Navbar';
@@ -13,7 +14,7 @@ function CartPage() {
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
-      alert('Please sign in to checkout');
+      toast.warning('Please sign in to checkout');
       navigate('/signin');
       return;
     }

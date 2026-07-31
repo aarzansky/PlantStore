@@ -5,11 +5,16 @@ const PlantSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Plant name is required'],
   },
-  category: {
-    type: String,
-    required: [true, 'Category is required'],
-    // Categories now live in their own collection (see models/Category.js)
-    // and are managed from the admin panel, so this is no longer a fixed enum.
+  // A plant can belong to more than one category (e.g. ['Succulents', 'Discounts']).
+  // Categories themselves live in their own collection (see models/Category.js)
+  // and are managed from the admin panel.
+  categories: {
+    type: [String],
+    required: [true, 'At least one category is required'],
+    validate: {
+      validator: (value) => Array.isArray(value) && value.length > 0,
+      message: 'At least one category is required',
+    },
   },
   price: {
     type: Number,
@@ -34,6 +39,12 @@ const PlantSchema = new mongoose.Schema({
     default: 0,
     min: 0,
     max: 5,
+  },
+  discountPercent: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 100,
   },
   createdAt: {
     type: Date,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { adminAPI } from '../services/api';
 import AdminLayout from '../components/AdminLayout';
 import './AdminOrders.css';
@@ -29,10 +30,10 @@ function AdminOrders() {
   const handleStatusUpdate = async (id, status) => {
     try {
       await adminAPI.updateOrderStatus(id, status);
-      alert('Order status updated!');
+      toast.success('Order status updated!');
       fetchOrders();
     } catch (error) {
-      alert(error.response?.data?.message || 'Error updating order');
+      toast.error(error.response?.data?.message || 'Error updating order');
     }
   };
 
@@ -40,10 +41,10 @@ function AdminOrders() {
     if (window.confirm('Are you sure you want to delete this order?')) {
       try {
         await adminAPI.deleteOrder(id);
-        alert('Order deleted successfully!');
+        toast.success('Order deleted successfully!');
         fetchOrders();
       } catch (error) {
-        alert(error.response?.data?.message || 'Error deleting order');
+        toast.error(error.response?.data?.message || 'Error deleting order');
       }
     }
   };
@@ -94,17 +95,23 @@ function AdminOrders() {
                     </td>
                     <td>Rs.{order.totalAmount.toFixed(2)}</td>
                     <td>
-                      <select
-                        value={order.status}
-                        onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
-                        className={`status-select ${order.status}`}
-                      >
-                        {statusOptions.map((status) => (
-                          <option key={status} value={status}>
-                            {status.charAt(0).toUpperCase() + status.slice(1)}
-                          </option>
-                        ))}
-                      </select>
+                      {order.status === 'delivered' || order.status === 'cancelled' ? (
+                        <span className={`status-select status-locked ${order.status}`}>
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)} (locked)
+                        </span>
+                      ) : (
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleStatusUpdate(order._id, e.target.value)}
+                          className={`status-select ${order.status}`}
+                        >
+                          {statusOptions.map((status) => (
+                            <option key={status} value={status}>
+                              {status.charAt(0).toUpperCase() + status.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      )}
                     </td>
                     <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                     <td>
@@ -115,12 +122,12 @@ function AdminOrders() {
                         >
                           View
                         </button>
-                        <button
+                        {/* <button
                           className="btn-delete"
                           onClick={() => handleDelete(order._id)}
                         >
                           Delete
-                        </button>
+                        </button> */}
                       </div>
                     </td>
                   </tr>

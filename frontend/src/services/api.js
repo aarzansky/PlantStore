@@ -29,6 +29,7 @@ export const authAPI = {
   register: (userData) => api.post('/auth/register', userData),
   login: (credentials) => api.post('/auth/login', credentials),
   getProfile: () => api.get('/auth/me'),
+  updateProfile: (userData) => api.put('/auth/me', userData),
 };
 
 // Plants API calls

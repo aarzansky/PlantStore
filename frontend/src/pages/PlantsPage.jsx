@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useCart } from '../context/CartContext';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -28,6 +29,13 @@ function PlantsPage() {
     fetchCategories();
   }, []);
 
+  // Keep the selected category filter in sync with the URL - so a navbar link
+  // like /plants?category=Discounts still works even when we're already on
+  // this page (React Router doesn't remount the component in that case).
+  useEffect(() => {
+    setSelectedCategory(searchParams.get('category') || 'All');
+  }, [searchParams]);
+
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -38,7 +46,11 @@ function PlantsPage() {
         } else {
           response = await plantsAPI.getByCategory(selectedCategory);
         }
-        setPlants(response.data);
+        // Discounted plants always float to the top, regardless of category
+        const sorted = [...response.data].sort(
+          (a, b) => (b.discountPercent > 0 ? 1 : 0) - (a.discountPercent > 0 ? 1 : 0)
+        );
+        setPlants(sorted);
       } catch (error) {
         console.error('Error fetching plants:', error);
       } finally {
@@ -51,7 +63,7 @@ function PlantsPage() {
 
   const handleAddToCart = (plant) => {
     addToCart(plant);
-    alert(`${plant.name} added to cart!`);
+    toast.success(`${plant.name} added to cart!`);
   };
 
   return (
@@ -88,7 +100,7 @@ function PlantsPage() {
                 />
                 <div className="plant-info">
                   <h3>{plant.name}</h3>
-                  <p className="plant-category">{plant.category}</p>
+                  <p className="plant-category">{(plant.categories || []).join(', ')}</p>
                   <p className="plant-price">Rs.{plant.price}</p>
                   <div className="plant-actions">
                     <button 

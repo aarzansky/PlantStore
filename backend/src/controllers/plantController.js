@@ -32,7 +32,8 @@ const getPlantById = async (req, res) => {
 // @access  Public
 const getPlantsByCategory = async (req, res) => {
   try {
-    const plants = await Plant.find({ category: req.params.category });
+    // Mongoose matches this against any element of the categories array
+    const plants = await Plant.find({ categories: req.params.category });
     res.json(plants);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -44,15 +45,16 @@ const getPlantsByCategory = async (req, res) => {
 // @access  Private/Admin
 const createPlant = async (req, res) => {
   try {
-    const { name, category, price, description, imageUrl, stock } = req.body;
+    const { name, categories, price, description, imageUrl, stock, discountPercent } = req.body;
 
     const plant = await Plant.create({
       name,
-      category,
+      categories,
       price,
       description,
       imageUrl,
       stock,
+      discountPercent,
     });
 
     res.status(201).json(plant);
